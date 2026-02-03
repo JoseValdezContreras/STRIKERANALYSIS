@@ -230,4 +230,5 @@ xg_slider.js_on_change("value", CustomJS(args=dict(source=source, stats_div=stat
 # RENDER
 # ─────────────────────────────────────────────────────────────────────────────
 main_view = row(column(pitch, xg_slider), stats_div)
-st.bokeh_chart(column(main_view, op_fig), use_container_width=False)
+st.bokeh_chart(pitch)
+st.bokeh_chart(op_fig)

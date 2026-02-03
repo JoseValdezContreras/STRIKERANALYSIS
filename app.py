@@ -3,6 +3,7 @@ import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, CustomJS, Slider, HoverTool, Div, Range1d
 from streamlit_bokeh import streamlit_bokeh # New component import
+from bokeh.layouts import column, row
 
 st.set_page_config(page_title="Striker Efficiency Lab", layout="wide")
 
@@ -150,13 +151,20 @@ xg_slider = Slider(start=0, end=0.7, value=0, step=0.01, title="Min xG Quality F
 callback = CustomJS(args=dict(source=source, stats_div=stats_div), code=JS_CODE)
 xg_slider.js_on_change("value", callback)
 
-# ─── 6. Final Layout (Using the streamlit-bokeh component) ──────────────────
-col1, col2 = st.columns([1.2, 1])
+# ─── 6. Final Layout (The "Single Document" Fix) ──────────────────────────
+from bokeh.layouts import column, row
 
-with col1:
-    streamlit_bokeh(pitch)
-    streamlit_bokeh(xg_slider)
+# 1. Create the Left Column (Visuals: Pitch + Slider)
+# sizing_mode="stretch_width" helps the slider fill the space
+left_side = column(pitch, xg_slider, sizing_mode="stretch_width")
 
-with col2:
-    streamlit_bokeh(stats_div)
-    streamlit_bokeh(op_fig)
+# 2. Create the Right Column (Data: Stats + Overperformance Graph)
+right_side = column(stats_div, op_fig, sizing_mode="stretch_width")
+
+# 3. Combine them into a single Row
+# This makes it a side-by-side dashboard
+final_layout = row(left_side, right_side, sizing_mode="scale_width")
+
+# 4. ONE SINGLE CALL to the component
+# This sends the entire "bundle" to your browser in one go
+streamlit_bokeh(final_layout)

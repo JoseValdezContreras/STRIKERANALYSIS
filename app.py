@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, CustomJS, Slider, HoverTool, Div, Range1d
-import os
-from streamlit_bokeh import streamlit_bokeh
+from streamlit_bokeh import streamlit_bokeh # New component import
+
 st.set_page_config(page_title="Striker Efficiency Lab", layout="wide")
 
 # ─── 1. Load Data ──────────────────────────────────────────────────────────
@@ -15,14 +15,13 @@ def load_data():
 
 df = load_data()
 
-# ─── 2. Selection & Toggles ────────────────────────────────────────────────
+# ─── 2. Selection ──────────────────────────────────────────────────────────
 st.title("🎯 Striker Efficiency Lab")
 
 all_players = sorted(df["player"].unique())
 selected_player = st.selectbox("Select Striker", all_players, 
                                index=all_players.index("Cristiano Ronaldo") if "Cristiano Ronaldo" in all_players else 0)
 
-st.write("### Filter Situations")
 all_situations = sorted(df['situation'].unique())
 cols = st.columns(len(all_situations))
 selected_situations = []
@@ -33,7 +32,7 @@ for i, sit in enumerate(all_situations):
 player_df = df[(df["player"] == selected_player) & (df["situation"].isin(selected_situations))].copy()
 
 if player_df.empty:
-    st.warning(f"No data found for {selected_player}.")
+    st.warning("No data found for this selection.")
     st.stop()
 
 # ─── 3. Prep Sources ───────────────────────────────────────────────────────
@@ -55,9 +54,9 @@ source = ColumnDataSource(data=dict(
     line_color=["#00e676" if g == 1 else "white" for g in player_df["GOAL"]]
 ))
 
-# ─── 4. Build Plots (Bokeh 2.4.3 compatible) ──────────────────────────────
+# ─── 4. Build Plots (Modern Bokeh 3.8+) ───────────────────────────────────
 
-# Initial Stats Logic
+# Initial Stats Display
 init_goals = player_df['GOAL'].sum()
 init_xg = player_df['xG'].sum()
 init_leth = init_goals / init_xg if init_xg > 0 else 0
@@ -97,20 +96,20 @@ op_fig.legend.location = "top_left"
 op_fig.legend.background_fill_alpha = 0
 op_fig.legend.label_text_color = "white"
 
-# Updated for Bokeh 2.4.3 Compatibility
+# ─── 5. JavaScript (Modern JS) ──────────────────────────────────────────────
 JS_CODE = """
-    var thresh = cb_obj.value;
-    var d = source.data;
-    var xg = d['xg'];
-    var goal_flag = d['goal_flag'];
-    var color = d['color'];
-    var alpha = d['alpha'];
-    var size = d['size'];
-    var line_c = d['line_color'];
+    const thresh = cb_obj.value;
+    const d = source.data;
+    const xg = d['xg'];
+    const goal_flag = d['goal_flag'];
+    const color = d['color'];
+    const alpha = d['alpha'];
+    const size = d['size'];
+    const line_c = d['line_color'];
 
-    var shots=0, goals=0, xgSum=0;
+    let shots=0, goals=0, xgSum=0;
 
-    for (var i = 0; i < xg.length; i++) {
+    for (let i = 0; i < xg.length; i++) {
         if (xg[i] >= thresh) {
             color[i] = goal_flag[i] ? "#00e676" : "#ff5f52";
             alpha[i] = 0.85;
@@ -128,11 +127,11 @@ JS_CODE = """
     }
     source.change.emit();
 
-    var lethality = xgSum > 0 ? (goals / xgSum) : 0;
-    var xgDiff = goals - xgSum;
-    var convPct = shots > 0 ? (goals / shots * 100) : 0;
-    var diffColor = xgDiff >= 0 ? "#00e676" : "#ff5f52";
-    var grade = lethality > 1.2 ? "S" : lethality > 1.05 ? "A" : lethality > 0.95 ? "B" : "C";
+    const lethality = xgSum > 0 ? (goals / xgSum) : 0;
+    const xgDiff = goals - xgSum;
+    const convPct = shots > 0 ? (goals / shots * 100) : 0;
+    const diffColor = xgDiff >= 0 ? "#00e676" : "#ff5f52";
+    let grade = lethality > 1.2 ? "S" : lethality > 1.05 ? "A" : lethality > 0.95 ? "B" : "C";
 
     stats_div.text = '<div style="background:#1a1d27; border:1px solid #2e3240; border-radius:12px; padding:20px; color:white; font-family:sans-serif;">' +
         '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">' +
@@ -151,11 +150,10 @@ xg_slider = Slider(start=0, end=0.7, value=0, step=0.01, title="Min xG Quality F
 callback = CustomJS(args=dict(source=source, stats_div=stats_div), code=JS_CODE)
 xg_slider.js_on_change("value", callback)
 
-# ─── 6. Final Layout (Using the new component) ───────────────
+# ─── 6. Final Layout (Using the streamlit-bokeh component) ──────────────────
 col1, col2 = st.columns([1.2, 1])
 
 with col1:
-    # We use streamlit_bokeh instead of st.bokeh_chart
     streamlit_bokeh(pitch)
     streamlit_bokeh(xg_slider)
 

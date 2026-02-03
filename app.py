@@ -97,7 +97,7 @@ op_fig.legend.location = "top_left"
 op_fig.legend.background_fill_alpha = 0
 op_fig.legend.label_text_color = "white"
 
-# ─── 5. JavaScript (Stability update) ───────────────────────────────────────
+# Updated for Bokeh 2.4.3 Compatibility
 JS_CODE = """
     var thresh = cb_obj.value;
     var d = source.data;

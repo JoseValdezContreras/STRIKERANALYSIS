@@ -3,7 +3,7 @@ import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, CustomJS, Slider, HoverTool, Div, Range1d
 import os
-
+from streamlit_bokeh import streamlit_bokeh
 st.set_page_config(page_title="Striker Efficiency Lab", layout="wide")
 
 # ─── 1. Load Data ──────────────────────────────────────────────────────────
@@ -151,13 +151,14 @@ xg_slider = Slider(start=0, end=0.7, value=0, step=0.01, title="Min xG Quality F
 callback = CustomJS(args=dict(source=source, stats_div=stats_div), code=JS_CODE)
 xg_slider.js_on_change("value", callback)
 
-# ─── 6. Final Layout ────────────────────────────────────────────────────────
+# ─── 6. Final Layout (Using the new component) ───────────────
 col1, col2 = st.columns([1.2, 1])
 
 with col1:
-    st.bokeh_chart(pitch)
-    st.bokeh_chart(xg_slider)
+    # We use streamlit_bokeh instead of st.bokeh_chart
+    streamlit_bokeh(pitch)
+    streamlit_bokeh(xg_slider)
 
 with col2:
-    st.bokeh_chart(stats_div)
-    st.bokeh_chart(op_fig)
+    streamlit_bokeh(stats_div)
+    streamlit_bokeh(op_fig)

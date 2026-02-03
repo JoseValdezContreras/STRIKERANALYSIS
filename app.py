@@ -18,6 +18,8 @@ def load_data():
 
 try:
     df = load_data()
+    st.write(f"Total rows loaded: {len(df)}")
+    st.write(f"Columns found: {list(df.columns)}")
 except Exception as e:
     st.error(f"Error: Could not find the parquet file. Make sure it's in the same folder as app.py. Details: {e}")
     st.stop()

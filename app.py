@@ -332,12 +332,12 @@ op_fig.line("idx", "cum_actual",   source=op_source, color="#00e676", line_width
 op_fig.line("idx", "cum_expected", source=op_source, color="#a78bfa", line_width=2,   line_dash="dashed", legend_label="Expected (xG)")
 
 # Use scatter instead of circle (Bokeh 3.4+ compatibility)
-goal_glyph = op_fig.scatter("idx", "y", source=goal_source, marker="circle",
-                            size=10, fill_color="#00e676", line_color="white", line_width=2)
-op_fig.add_tools(HoverTool(renderers=[goal_glyph], tooltips=[
-    ("Shot xG", "@xg{0.000}"),
-    ("Overperformance", "+@overp{0.00}"),
-]))
+#goal_glyph = op_fig.scatter("idx", "y", source=goal_source, marker="circle",
+#                            size=10, fill_color="#00e676", line_color="white", line_width=2)
+#op_fig.add_tools(HoverTool(renderers=[goal_glyph], tooltips=[
+#    ("Shot xG", "@xg{0.000}"),
+#    ("Overperformance", "+@overp{0.00}"),
+#]))
 
 if peak_overp_val > 0:
     peak_label = Label(

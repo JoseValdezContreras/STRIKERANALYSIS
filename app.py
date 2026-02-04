@@ -18,8 +18,6 @@ def load_data():
 
 df = load_data()
 
-df = load_data()
-
 # ─── UI Header ───────────────────────────────────────────────────────────────
 st.title("⚽ Live 'What-If' Shot Simulator")
 st.write("Comprehensive shot analytics — filter by xG, explore patterns, see what makes this player dangerous.")

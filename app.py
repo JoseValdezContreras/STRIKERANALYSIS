@@ -511,7 +511,7 @@ from bokeh.layouts import column, row
 
 # 1. Create the Left Column (Visuals: Pitch + Slider)
 # sizing_mode="stretch_width" helps the slider fill the space
-left_side = column(pitch, xg_slider, sit_title,sit_fig sizing_mode="stretch_width")
+left_side = column(pitch, xg_slider, sit_title,sit_fig, sizing_mode="stretch_width")
 
 # 2. Create the Right Column (Data: Stats + Overperformance Graph)
 right_side = column(stats_div, op_fig, type_title, type_fig, sizing_mode="stretch_width")

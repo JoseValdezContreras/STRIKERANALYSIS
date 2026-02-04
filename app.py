@@ -511,10 +511,10 @@ from bokeh.layouts import column, row
 
 # 1. Create the Left Column (Visuals: Pitch + Slider)
 # sizing_mode="stretch_width" helps the slider fill the space
-left_side = column(pitch, xg_slider, sizing_mode="stretch_width")
+left_side = column(pitch, xg_slider, op_fig, sizing_mode="stretch_width")
 
 # 2. Create the Right Column (Data: Stats + Overperformance Graph)
-right_side = column(stats_div, op_fig, sizing_mode="stretch_width")
+right_side = column(stats_div, sizing_mode="stretch_width")
 
 # 3. Combine them into a single Row
 # This makes it a side-by-side dashboard

@@ -16,6 +16,7 @@ def load_data():
     df.columns = df.columns.str.strip()
     return df[df["xG"] > 0].copy()
 
+
 df = load_data()
 
 # ─── UI Header ───────────────────────────────────────────────────────────────
@@ -319,9 +320,9 @@ op_fig.xaxis.axis_label = "← Hardest shots (low xG)          Shot index (sorte
 op_fig.xaxis.axis_label_text_color = "#6b7280"
 op_fig.xaxis.axis_label_text_font_size = "10px"
 
-op_fig.varea(top="cum_actual", x="idx", source=op_source,
+op_fig.varea(x="idx", y1=0, y2="cum_actual", source=op_source,
              fill_alpha=0.12, fill_color="#00e676", line_color=None)
-op_fig.varea(top="cum_expected", x="idx", source=op_source,
+op_fig.varea(x="idx", y1=0, y2="cum_expected", source=op_source,
              fill_alpha=0.12, fill_color="#a78bfa", line_color=None)
 op_fig.line("idx", "cum_actual",   source=op_source, color="#00e676", line_width=2.5, legend_label="Actual goals")
 op_fig.line("idx", "cum_expected", source=op_source, color="#a78bfa", line_width=2,   line_dash="dashed", legend_label="Expected (xG)")

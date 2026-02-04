@@ -1,4 +1,6 @@
 streamlit
 pandas
-bokeh
+bokeh>=3.8.0
 numpy
+pyarrow
+streamlit-bokeh

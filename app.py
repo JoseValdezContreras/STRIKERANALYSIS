@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 from bokeh.plotting import figure
 from bokeh.models import ColumnDataSource, CustomJS, Slider, HoverTool, Div, Range1d
+from streamlit_bokeh import streamlit_bokeh # New component import
 from bokeh.layouts import column, row
 
 st.set_page_config(page_title="Striker Efficiency Lab", layout="wide")

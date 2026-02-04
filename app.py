@@ -12,10 +12,11 @@ st.set_page_config(page_title="Ultra-Smooth Shot Map", layout="wide")
 # ─── Load Data ───────────────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv("datacompleta.csv")
+    df = pd.read_parquet("datacompleta.parquet", engine='pyarrow')
     df.columns = df.columns.str.strip()
     return df[df["xG"] > 0].copy()
 
+df = load_data()
 
 df = load_data()
 

@@ -229,6 +229,5 @@ xg_slider.js_on_change("value", CustomJS(args=dict(source=source, stats_div=stat
 # ─────────────────────────────────────────────────────────────────────────────
 # RENDER
 # ─────────────────────────────────────────────────────────────────────────────
-main_view = row(column(pitch, xg_slider), stats_div)
-st.bokeh_chart(pitch)
-st.bokeh_chart(op_fig)
+# This sends the entire "bundle" to your browser in one go
+streamlit_bokeh(final_layout)

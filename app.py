@@ -25,14 +25,25 @@ df = load_data()
 st.title("⚽ Live 'What-If' Shot Simulator")
 st.write("Comprehensive shot analytics — filter by xG, explore patterns, see what makes this player dangerous.")
 
-# ─── Player Selector ─────────────────────────────────────────────────────────
+# ─── 2. Selection ──────────────────────────────────────────────────────────
+st.title("🎯 Striker Efficiency Lab")
+
 all_players = sorted(df["player"].unique())
-selected_player = st.selectbox(
-    "Select Striker",
-    all_players,
-    index=all_players.index("Cristiano Ronaldo") if "Cristiano Ronaldo" in all_players else 0,
-)
-player_df = df[df["player"] == selected_player].copy()
+selected_player = st.selectbox("Select Striker", all_players, 
+                               index=all_players.index("Lionel Messi") if "Lionel Messi" in all_players else 0)
+
+all_situations = sorted(df['situation'].unique())
+cols = st.columns(len(all_situations))
+selected_situations = []
+for i, sit in enumerate(all_situations):
+    if cols[i].checkbox(sit, value=True):
+        selected_situations.append(sit)
+
+player_df = df[(df["player"] == selected_player) & (df["situation"].isin(selected_situations))].copy()
+
+if player_df.empty:
+    st.warning("No data found for this selection.")
+    st.stop()
 
 
 # ─────────────────────────────────────────────────────────────────────────────

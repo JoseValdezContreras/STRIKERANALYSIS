@@ -415,7 +415,7 @@ sit_fig.grid.visible = False
 sit_fig.annular_wedge(
     x=0, y=0, inner_radius=0.5, outer_radius=0.95,
     start_angle="start", end_angle="end",
-    color="color", source=sit_source, alpha=0.85, line_color="white", line_width=2,
+    color="color", source=sit_source, alpha=0.85, fill_color="white", line_width=2,
 )
 sit_fig.add_tools(HoverTool(tooltips=[
     ("Situation", "@situation"),

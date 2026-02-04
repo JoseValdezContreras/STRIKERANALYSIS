@@ -321,9 +321,9 @@ op_fig.xaxis.axis_label_text_color = "#6b7280"
 op_fig.xaxis.axis_label_text_font_size = "10px"
 
 op_fig.varea(x="idx", y1=0, y2="cum_actual", source=op_source,
-             fill_alpha=0.12, fill_color="#00e676", line_color=None)
+             fill_alpha=0.12, fill_color="#00e676", fill_color=None)
 op_fig.varea(x="idx", y1=0, y2="cum_expected", source=op_source,
-             fill_alpha=0.12, fill_color="#a78bfa", line_color=None)
+             fill_alpha=0.12, fill_color="#a78bfa", fill_color=None)
 op_fig.line("idx", "cum_actual",   source=op_source, color="#00e676", line_width=2.5, legend_label="Actual goals")
 op_fig.line("idx", "cum_expected", source=op_source, color="#a78bfa", line_width=2,   line_dash="dashed", legend_label="Expected (xG)")
 
@@ -415,7 +415,7 @@ sit_fig.grid.visible = False
 sit_fig.annular_wedge(
     x=0, y=0, inner_radius=0.5, outer_radius=0.95,
     start_angle="start", end_angle="end",
-    color="color", source=sit_source, alpha=0.85, fill_color="white", line_width=2,
+    color="color", source=sit_source, alpha=0.85, line_color="white", line_width=2,
 )
 sit_fig.add_tools(HoverTool(tooltips=[
     ("Situation", "@situation"),

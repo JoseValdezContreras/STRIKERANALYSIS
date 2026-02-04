@@ -146,7 +146,7 @@ source = ColumnDataSource(
         post=(player_df["result"] == "ShotOnPost").astype(int).tolist(),
         color=["#00e676" if g else "#ff5f52" for g in (player_df["result"] == "Goal")],
         alpha=[0.85] * len(player_df),
-        size=[12 if g else 9 for g in (player_df["result"] == "Goal")],
+        marker_size=[12 if g else 9 for g in (player_df["result"] == "Goal")],
         line_color=["#00e676" if g else "white" for g in (player_df["result"] == "Goal")],
     )
 )
@@ -166,8 +166,9 @@ pitch.rect(x=0.5, y=0.91,  width=0.6, height=0.18, fill_alpha=0, line_color="whi
 pitch.rect(x=0.5, y=0.965, width=0.3, height=0.07, fill_alpha=0, line_color="white", line_width=2)
 pitch.segment(x0=0.45, y0=1.0, x1=0.55, y1=1.0, line_color="#00FF00", line_width=10)
 
-glyph = pitch.circle(
-    "x", "y", size="size", source=source,
+# Use scatter instead of circle (Bokeh 3.4+ compatibility)
+glyph = pitch.scatter(
+    "x", "y", size="marker_size", source=source,
     fill_color="color", line_color="line_color", line_width=2,
     fill_alpha="alpha", line_alpha="alpha",
 )
@@ -185,7 +186,7 @@ STATS_JS = """
     const post      = d['post'];
     const color     = d['color'];
     const alpha     = d['alpha'];
-    const size      = d['size'];
+    const marker_size = d['marker_size'];
 
     let shots=0, goals=0, onTgt=0, xgSum=0, highXg=-1;
     let nBlocked=0, nMissed=0, nSaved=0, nPost=0;
@@ -194,7 +195,7 @@ STATS_JS = """
         if (xg[i] >= thresh) {
             color[i] = goal_flag[i] ? "#00e676" : "#ff5f52";
             alpha[i] = 0.85;
-            size[i]  = goal_flag[i] ? 12 : 9;
+            marker_size[i]  = goal_flag[i] ? 12 : 9;
             shots   += 1;
             goals   += goal_flag[i];
             onTgt   += on_target[i];
@@ -207,7 +208,7 @@ STATS_JS = """
         } else {
             color[i] = "#555555";
             alpha[i] = 0.25;
-            size[i]  = 6;
+            marker_size[i]  = 6;
         }
     }
     source.change.emit();
@@ -227,7 +228,7 @@ STATS_JS = """
 
     function badge(v, c) { return '<span style="color:'+c+';font-weight:700;font-size:22px;">'+v+'</span>'; }
     function lbl(t)      { return '<span style="color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:1px;">'+t+'</span>'; }
-    function row(l, v, c) {
+    function statRow(l, v, c) {
         c = c || "#ffffff";
         return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid #2e3240;">'+lbl(l)+badge(v,c)+'</div>';
     }
@@ -242,23 +243,23 @@ STATS_JS = """
       +   '<span style="font-size:10px;color:#4ade80;background:#1a3a2a;padding:2px 8px;border-radius:99px;border:1px solid rgba(74,222,128,0.25);">● live</span>'
       + '</div>'
       + section("Shot Summary")
-      + row("Total shots",   shots)
-      + row("Goals scored",  goals,                                          "#00e676")
-      + row("Conversion %",  convPct.toFixed(1)+"%",  convPct>=15  ? "#00e676" : "#ffcc00")
-      + row("On-target %",   onTgtPct.toFixed(1)+"%", onTgtPct>=40 ? "#00e676" : "#ffcc00")
+      + statRow("Total shots",   shots)
+      + statRow("Goals scored",  goals,                                          "#00e676")
+      + statRow("Conversion %",  convPct.toFixed(1)+"%",  convPct>=15  ? "#00e676" : "#ffcc00")
+      + statRow("On-target %",   onTgtPct.toFixed(1)+"%", onTgtPct>=40 ? "#00e676" : "#ffcc00")
       + section("Shot Outcomes")
-      + row("⚽ Goals",    goalPct.toFixed(0)+"%",    "#00e676")
-      + row("🧤 Saved",   savedPct.toFixed(0)+"%",   "#60a5fa")
-      + row("❌ Missed",  missedPct.toFixed(0)+"%",  "#ff5f52")
-      + row("🚫 Blocked", blockedPct.toFixed(0)+"%", "#9ca3af")
-      + (nPost > 0 ? row("🥅 Hit post", postPct.toFixed(0)+"%", "#f59e0b") : "")
+      + statRow("⚽ Goals",    goalPct.toFixed(0)+"%",    "#00e676")
+      + statRow("🧤 Saved",   savedPct.toFixed(0)+"%",   "#60a5fa")
+      + statRow("❌ Missed",  missedPct.toFixed(0)+"%",  "#ff5f52")
+      + statRow("🚫 Blocked", blockedPct.toFixed(0)+"%", "#9ca3af")
+      + (nPost > 0 ? statRow("🥅 Hit post", postPct.toFixed(0)+"%", "#f59e0b") : "")
       + section("xG Analysis")
-      + row("Total xG",        xgSum.toFixed(2),              "#a78bfa")
-      + row("Actual goals",    goals,                         "#00e676")
-      + row("Over / Under-perform", xgSign+xgDiff.toFixed(2), xgColor)
+      + statRow("Total xG",        xgSum.toFixed(2),              "#a78bfa")
+      + statRow("Actual goals",    goals,                         "#00e676")
+      + statRow("Over / Under-perform", xgSign+xgDiff.toFixed(2), xgColor)
       + section("Per-Shot Insights")
-      + row("Highest xG chance",  highXg >= 0 ? highXg.toFixed(3) : "—", "#f59e0b")
-      + row("Avg xG per shot",    xgPerShot.toFixed(3),                   "#60a5fa")
+      + statRow("Highest xG chance",  highXg >= 0 ? highXg.toFixed(3) : "—", "#f59e0b")
+      + statRow("Avg xG per shot",    xgPerShot.toFixed(3),                   "#60a5fa")
       + '</div></div>';
 """
 
@@ -320,6 +321,7 @@ op_fig.xaxis.axis_label = "← Hardest shots (low xG)          Shot index (sorte
 op_fig.xaxis.axis_label_text_color = "#6b7280"
 op_fig.xaxis.axis_label_text_font_size = "10px"
 
+# Bokeh 3.x varea (no line_color support, uses y1/y2 instead of top)
 op_fig.varea(x="idx", y1=0, y2="cum_actual", source=op_source,
              fill_alpha=0.12, fill_color="#00e676")
 op_fig.varea(x="idx", y1=0, y2="cum_expected", source=op_source,
@@ -327,8 +329,9 @@ op_fig.varea(x="idx", y1=0, y2="cum_expected", source=op_source,
 op_fig.line("idx", "cum_actual",   source=op_source, color="#00e676", line_width=2.5, legend_label="Actual goals")
 op_fig.line("idx", "cum_expected", source=op_source, color="#a78bfa", line_width=2,   line_dash="dashed", legend_label="Expected (xG)")
 
-goal_glyph = op_fig.circle("idx", "y", source=goal_source,
-                           size=10, fill_color="#00e676", line_color="white", line_width=2)
+# Use scatter instead of circle (Bokeh 3.4+ compatibility)
+goal_glyph = op_fig.scatter("idx", "y", source=goal_source, marker="circle",
+                            size=10, fill_color="#00e676", line_color="white", line_width=2)
 op_fig.add_tools(HoverTool(renderers=[goal_glyph], tooltips=[
     ("Shot xG", "@xg{0.000}"),
     ("Overperformance", "+@overp{0.00}"),
@@ -381,12 +384,12 @@ for s in situations:
             "conv": goals / total * 100,
         })
 
-# Create donut wedges
+# Create donut wedges - RENAMED LOOP VARIABLE TO AVOID SHADOWING
 angles = []
 colors_sit = ["#00e676", "#a78bfa", "#60a5fa"]
 starts = [0]
-for i, row in enumerate(sit_data):
-    angle = row["attempts"] / len(player_df) * 2 * pi
+for i, sit_item in enumerate(sit_data):  # Changed from 'row' to 'sit_item'
+    angle = sit_item["attempts"] / len(player_df) * 2 * pi
     angles.append(angle)
     if i < len(sit_data) - 1:
         starts.append(starts[-1] + angle)
@@ -511,4 +514,3 @@ st.info(
     "🔥 **Overperformance curve** – every green spike is a goal that defied the odds  "
     "📊 Hover over any chart for details"
 )
-

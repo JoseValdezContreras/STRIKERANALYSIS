@@ -229,5 +229,18 @@ xg_slider.js_on_change("value", CustomJS(args=dict(source=source, stats_div=stat
 # ─────────────────────────────────────────────────────────────────────────────
 # RENDER
 # ─────────────────────────────────────────────────────────────────────────────
+# ─── 6. Final Layout (The "Single Document" Fix) ──────────────────────────
+from bokeh.layouts import column, row
+
+# 1. Create the Left Column (Visuals: Pitch + Slider)
+# sizing_mode="stretch_width" helps the slider fill the space
+left_side = column(pitch, xg_slider, sizing_mode="stretch_width")
+
+# 2. Create the Right Column (Data: Stats + Overperformance Graph)
+right_side = column(stats_div, op_fig, sizing_mode="stretch_width")
+
+# 3. Combine them into a single Row
+# This makes it a side-by-side dashboard
+final_layout = row(left_side, right_side, sizing_mode="scale_width")
 # This sends the entire "bundle" to your browser in one go
 streamlit_bokeh(final_layout)

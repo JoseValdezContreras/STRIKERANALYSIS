@@ -21,7 +21,7 @@ st.title("🎯 Striker Efficiency Lab")
 
 all_players = sorted(df["player"].unique())
 selected_player = st.selectbox("Select Striker", all_players, 
-                               index=all_players.index("Cristiano Ronaldo") if "Cristiano Ronaldo" in all_players else 0)
+                               index=all_players.index("Son Heung-Min") if "Son Heung-Min" in all_players else 0)
 
 all_situations = sorted(df['situation'].unique())
 cols = st.columns(len(all_situations))

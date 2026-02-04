@@ -5,6 +5,8 @@ from bokeh.models import ColumnDataSource, CustomJS, Slider, HoverTool, Div, Lab
 from bokeh.layouts import column, row
 from bokeh.models import Range1d
 from math import pi
+from streamlit_bokeh import streamlit_bokeh # New component import
+
 
 st.set_page_config(page_title="Ultra-Smooth Shot Map", layout="wide")
 
@@ -500,17 +502,24 @@ type_title = Div(width=310, height=35, text="""
 # ─────────────────────────────────────────────────────────────────────────────
 # FINAL LAYOUT
 # ─────────────────────────────────────────────────────────────────────────────
-top_row       = row(column(pitch, xg_slider), stats_div)
-overperf_row  = column(op_title, op_fig)
-breakdown_row = row(column(sit_title, sit_fig), column(type_title, type_fig))
 
-layout = column(top_row, overperf_row, breakdown_row)
 
-st.bokeh_chart(layout, use_container_width=True)
 
-st.info(
-    "💡 **xG Threshold** – drag right to gray out low-probability shots.  "
-    "🟢 Green dots = goals &nbsp; 🔴 Red dots = misses/saved  "
-    "🔥 **Overperformance curve** – every green spike is a goal that defied the odds  "
-    "📊 Hover over any chart for details"
-)
+
+# ─── 6. Final Layout (The "Single Document" Fix) ──────────────────────────
+from bokeh.layouts import column, row
+
+# 1. Create the Left Column (Visuals: Pitch + Slider)
+# sizing_mode="stretch_width" helps the slider fill the space
+left_side = column(pitch, xg_slider, sit_title,sit_fig sizing_mode="stretch_width")
+
+# 2. Create the Right Column (Data: Stats + Overperformance Graph)
+right_side = column(stats_div, op_fig, type_title, type_fig, sizing_mode="stretch_width")
+
+# 3. Combine them into a single Row
+# This makes it a side-by-side dashboard
+final_layout = row(left_side, right_side, sizing_mode="scale_width")
+
+# 4. ONE SINGLE CALL to the component
+# This sends the entire "bundle" to your browser in one go
+streamlit_bokeh(final_layout)
